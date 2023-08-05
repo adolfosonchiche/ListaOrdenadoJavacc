@@ -1,0 +1,60 @@
+options {
+  IGNORE_CASE = true;
+  STATIC = false;
+}
+
+PARSER_BEGIN(Gramatica)
+/** Analizador de expresiones aritmeticas sencillas. */
+package com.adolfosc.analizador;
+public class Gramatica {
+private static boolean ordenado = true;
+}
+PARSER_END(Gramatica)
+
+/** Lexico */
+SKIP : {
+      " "
+    | "\t"
+    | "\r"
+    | "\n"
+}
+
+TOKEN : {
+      <NUMERO: (["0"-"9"])+>
+    | <COMA: ",">
+}
+/** Fin Lexico */
+
+/** Producción inicial
+    S -> NUM E 
+    |   E 
+*/
+void Analizar() :
+{int numero;}
+{
+    <NUMERO> {numero = Integer.parseInt(token.image);} ee(numero, true)
+
+}
+
+
+int ee(int numero, boolean order) :
+{ int num; int numSig; }
+{
+
+    <COMA> <NUMERO> {numSig = Integer.parseInt(token.image);if(numero <= numSig && order) {order = true;} else {order = false;}} num=ee(numSig, order) {        
+    return num;
+} 
+    |
+    lambda() {
+        System.out.println("fin de cadena");
+        if(order) {
+        System.out.println("ordenado");
+        } else {System.out.println("no ordenado");}
+         
+    }{return numero;}
+    
+}
+
+void lambda() :
+{}
+{ {System.out.print("hola mundo");}  }
